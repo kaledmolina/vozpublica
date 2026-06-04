@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,7 +31,7 @@ model User {
   passwordHash String
   role         Role     @default(WRITER)
   avatar       String?
-  bio          String?
+  bio          String?  @db.Text
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -74,8 +74,8 @@ model Article {
   id          String        @id @default(cuid())
   title       String
   slug        String        @unique
-  content     String        @default("")
-  excerpt     String        @default("")
+  content     String        @default("") @db.Text
+  excerpt     String        @default("") @db.Text
   coverImage  String?
   status      ArticleStatus @default(DRAFT)
   isFeatured  Boolean       @default(false)
@@ -134,7 +134,7 @@ model SystemLog {
   id        String    @id @default(cuid())
   action    LogAction
   userId    String?
-  details   String?
+  details   String?   @db.Text
   ipAddress String?
   createdAt DateTime  @default(now())
 

@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for Next.js with Prisma and SQLite
+# Multi-stage Dockerfile for Next.js with Prisma and MySQL
 # Stage 1: Install dependencies
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
@@ -28,9 +28,6 @@ ENV NODE_ENV=production
 # Install prisma CLI globally with the exact version from package.json for migrations
 RUN npm install -g prisma@6.11.1
 
-# Create db directory and set permissions
-RUN mkdir -p /app/db && chown -1001:1001 /app/db
-
 # Copy standalone build files
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
@@ -41,7 +38,6 @@ COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-ENV DATABASE_URL="file:../db/custom.db"
 
-# Startup command: push schema changes (creating/updating DB) and run server
-CMD ["sh", "-c", "prisma db push --accept-data-loss && node server.js"]
+# Startup command: wait for MySQL to start, run database push, and start application
+CMD ["sh", "-c", "until nc -z db 3306; do echo 'Waiting for MySQL...'; sleep 2; done && prisma db push --accept-data-loss && node server.js"]
