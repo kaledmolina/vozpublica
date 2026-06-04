@@ -1,0 +1,155 @@
+// ============================================
+// PORTAL DE NOTICIAS DIGITAL - Database Schema
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- AUTH & ROLES ----------
+
+enum Role {
+  ADMIN
+  WRITER
+}
+
+enum ArticleStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(WRITER)
+  avatar       String?
+  bio          String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  articles  Article[]
+  systemLogs SystemLog[]
+
+  @@map("users")
+}
+
+// ---------- CONTENT ----------
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  color       String    @default("#6366f1")
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  articles Article[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  content     String        @default("")
+  excerpt     String        @default("")
+  coverImage  String?
+  status      ArticleStatus @default(DRAFT)
+  isFeatured  Boolean       @default(false)
+  views       Int           @default(0)
+  authorId    String
+  categoryId  String?
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  author   User          @relation(fields: [authorId], references: [id])
+  category Category?     @relation(fields: [categoryId], references: [id])
+  tags     ArticleTag[]
+
+  @@index([status])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([publishedAt])
+  @@map("articles")
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+// ---------- SYSTEM ----------
+
+enum LogAction {
+  LOGIN
+  LOGOUT
+  ARTICLE_CREATE
+  ARTICLE_UPDATE
+  ARTICLE_DELETE
+  ARTICLE_PUBLISH
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
+  CATEGORY_CREATE
+  CATEGORY_UPDATE
+  CATEGORY_DELETE
+  TAG_CREATE
+  TAG_UPDATE
+  TAG_DELETE
+  SETTINGS_UPDATE
+  ERROR
+}
+
+model SystemLog {
+  id        String    @id @default(cuid())
+  action    LogAction
+  userId    String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("system_logs")
+}
+
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@map("site_settings")
+}
