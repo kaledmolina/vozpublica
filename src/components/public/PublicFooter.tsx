@@ -8,6 +8,13 @@ export function PublicFooter() {
   const categories = usePublicStore((s) => s.categories)
   const tags = usePublicStore((s) => s.tags)
 
+  const settings = usePublicStore((s) => s.settings || {})
+  const siteName = settings.site_name || 'NewsPortal'
+  const siteLogo = settings.site_logo
+
+  const firstLetter = siteName.charAt(0)
+  const restOfName = siteName.slice(1)
+
   const currentYear = new Date().getFullYear()
 
   return (
@@ -18,13 +25,19 @@ export function PublicFooter() {
           {/* Brand */}
           <div>
             <div className="mb-3 flex items-center gap-2">
-              <span
-                className="text-destructive"
-                style={{ fontFamily: 'Georgia, serif', fontSize: '1.75rem', fontWeight: 900 }}
-              >
-                N
-              </span>
-              <span className="text-lg font-extrabold tracking-tight">NewsPortal</span>
+              {siteLogo ? (
+                <img src={siteLogo} alt={siteName} className="h-8 max-w-[150px] object-contain" />
+              ) : (
+                <>
+                  <span
+                    className="text-destructive"
+                    style={{ fontFamily: 'Georgia, serif', fontSize: '1.75rem', fontWeight: 900 }}
+                  >
+                    {firstLetter}
+                  </span>
+                  <span className="text-lg font-extrabold tracking-tight">{restOfName}</span>
+                </>
+              )}
             </div>
             <p className="mb-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
               Tu fuente confiable de noticias de última hora, análisis en profundidad e historias de todo el mundo.
@@ -80,7 +93,7 @@ export function PublicFooter() {
       <Separator />
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 sm:flex-row sm:px-6 lg:px-8">
         <p className="text-xs text-muted-foreground">
-          © {currentYear} NewsPortal. Todos los derechos reservados.
+          © {currentYear} {siteName}. Todos los derechos reservados.
         </p>
         <p className="flex items-center gap-1 text-xs text-muted-foreground">
           Hecho con <Heart className="h-3 w-3 text-destructive" /> para el periodismo

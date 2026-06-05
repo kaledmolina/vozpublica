@@ -47,8 +47,10 @@ interface PublicState {
   currentPage: number
   searchQuery: string
   isLoading: boolean
+  settings: Record<string, string>
   featuredArticle: Article | null
 
+  fetchSettings: () => Promise<void>
   fetchCategories: () => Promise<void>
   fetchTags: () => Promise<void>
   fetchArticles: (params?: {
@@ -78,7 +80,20 @@ export const usePublicStore = create<PublicState>((set, get) => ({
   currentPage: 1,
   searchQuery: '',
   isLoading: false,
+  settings: {},
   featuredArticle: null,
+
+  fetchSettings: async () => {
+    try {
+      const res = await fetch('/api/settings')
+      if (res.ok) {
+        const data = await res.json()
+        set({ settings: data })
+      }
+    } catch {
+      console.error('Failed to fetch settings')
+    }
+  },
 
   fetchCategories: async () => {
     try {

@@ -27,6 +27,13 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
   const selectCategory = usePublicStore((s) => s.selectCategory)
   const search = usePublicStore((s) => s.search)
   const setView = usePublicStore((s) => s.setView)
+  
+  const settings = usePublicStore((s) => s.settings || {})
+  const siteName = settings.site_name || 'NewsPortal'
+  const siteLogo = settings.site_logo
+
+  const firstLetter = siteName.charAt(0)
+  const restOfName = siteName.slice(1)
 
   const handleDesktopSearch = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,10 +74,16 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
           }}
           className="flex items-center gap-2 text-lg font-extrabold tracking-tight"
         >
-          <span className="text-destructive" style={{ fontFamily: 'Georgia, serif', fontSize: '1.5rem' }}>
-            N
-          </span>
-          <span className="hidden sm:inline">ewsPortal</span>
+          {siteLogo ? (
+            <img src={siteLogo} alt={siteName} className="h-8 max-w-[150px] object-contain" />
+          ) : (
+            <>
+              <span className="text-destructive" style={{ fontFamily: 'Georgia, serif', fontSize: '1.5rem' }}>
+                {firstLetter}
+              </span>
+              <span className="hidden sm:inline">{restOfName}</span>
+            </>
+          )}
         </button>
 
         {/* Desktop Nav */}

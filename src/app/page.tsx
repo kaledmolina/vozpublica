@@ -35,12 +35,14 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
   const featuredArticle = usePublicStore((s) => s.featuredArticle)
   const selectedArticle = usePublicStore((s) => s.selectedArticle)
   const fetchCategories = usePublicStore((s) => s.fetchCategories)
+  const fetchSettings = usePublicStore((s) => s.fetchSettings)
   const fetchArticles = usePublicStore((s) => s.fetchArticles)
   const fetchArticle = usePublicStore((s) => s.fetchArticle)
 
   useEffect(() => {
     fetchCategories()
-  }, [fetchCategories])
+    fetchSettings()
+  }, [fetchCategories, fetchSettings])
 
   useEffect(() => {
     if (currentView === 'home') {
