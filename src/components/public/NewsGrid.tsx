@@ -59,7 +59,7 @@ export function NewsGrid() {
   })
 
   const isHomepageCover = !selectedCategory && !searchQuery
-  const gridArticles = isHomepageCover ? sortedArticles.slice(5) : sortedArticles
+  const gridArticles = isHomepageCover ? sortedArticles.slice(8) : sortedArticles
 
   // Loading skeletons
   if (isLoading && articles.length === 0) {

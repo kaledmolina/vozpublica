@@ -47,13 +47,13 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
 
   useEffect(() => {
     if (currentView === 'home') {
-      fetchArticles({ limit: 12 })
+      fetchArticles({ limit: 16 })
     }
   }, [currentView, fetchArticles])
 
-  // Get articles for HeroSection: featured ones first, or fallback to top 5 latest
+  // Get articles for HeroSection: featured ones first, or fallback to top 8 latest
   const featured = articles.filter((a) => a.isFeatured)
-  const heroArticles = featured.length > 0 ? featured.slice(0, 5) : articles.slice(0, 5)
+  const heroArticles = featured.length > 0 ? featured.slice(0, 8) : articles.slice(0, 8)
 
   // Show Hero Section only when on the homepage cover (no active category filter or search query)
   const showHero = currentView === 'home' && !selectedCategory && !searchQuery && heroArticles.length > 0
