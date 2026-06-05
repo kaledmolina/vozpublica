@@ -65,48 +65,48 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
   )
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full glass-panel transition-all duration-300">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <button
           onClick={() => {
             setView('home')
             handleCategoryClick(null)
           }}
-          className="flex items-center gap-2 text-lg font-extrabold tracking-tight"
+          className="flex items-center gap-2 text-xl font-extrabold tracking-tight font-heading"
         >
           {isSettingsLoading ? (
             <div className="flex h-8 items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
               <span className="text-xs text-muted-foreground font-normal">Cargando...</span>
             </div>
           ) : siteLogo ? (
-            <img src={siteLogo} alt={siteName} className="h-12 max-w-[200px] object-contain w-auto" />
+            <img src={siteLogo} alt={siteName} className="h-10 max-w-[200px] object-contain w-auto transition-transform duration-300 hover:scale-105" />
           ) : (
-            <>
-              <span className="text-destructive" style={{ fontFamily: 'Georgia, serif', fontSize: '1.5rem' }}>
+            <div className="flex items-center gap-1.5 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-serif font-black shadow-md shadow-primary/20 transition-transform duration-300 group-hover:scale-110">
                 {firstLetter}
-              </span>
-              <span className="hidden sm:inline">{restOfName}</span>
-            </>
+              </div>
+              <span className="hidden sm:inline text-gradient-primary">{restOfName}</span>
+            </div>
           )}
         </button>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+        <nav className="hidden items-center gap-2 lg:flex font-heading" aria-label="Main navigation">
           <button
             onClick={() => handleCategoryClick(null)}
-            className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-foreground ${
+            className={`relative px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full hover:bg-primary/5 ${
               selectedCategory === null
-                ? 'text-foreground'
-                : 'text-muted-foreground'
+                ? 'text-primary'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Todas
             {selectedCategory === null && (
               <motion.div
                 layoutId="activeCategory"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-destructive"
+                className="absolute bottom-1 left-4 right-4 h-0.5 bg-primary rounded-full"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
@@ -115,17 +115,18 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
             <button
               key={cat.id}
               onClick={() => handleCategoryClick(cat.slug)}
-              className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-foreground ${
+              className={`relative px-4 py-2 text-sm font-semibold transition-all duration-300 rounded-full hover:bg-primary/5 ${
                 selectedCategory === cat.slug
                   ? 'text-foreground'
-                  : 'text-muted-foreground'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
+              style={selectedCategory === cat.slug ? { color: cat.color } : undefined}
             >
               {cat.name}
               {selectedCategory === cat.slug && (
                 <motion.div
                   layoutId="activeCategory"
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
+                  className="absolute bottom-1 left-4 right-4 h-0.5 rounded-full"
                   style={{ backgroundColor: cat.color }}
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
@@ -242,7 +243,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
                   }}
                   className={`rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                     selectedCategory === null
-                      ? 'bg-destructive/10 text-destructive'
+                      ? 'bg-primary/10 text-primary'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
