@@ -210,113 +210,183 @@ export function NewsGrid() {
         </div>
       </div>
 
-      {/* Article Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <AnimatePresence mode="popLayout">
-          {sortedArticles.map((article) => (
-            <motion.div
-              key={article.id}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.5, cubicBezier: [0.16, 1, 0.3, 1] }}
-            >
-              <ArticleCard
-                article={article}
-                onClick={() => handleArticleClick(article.id)}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {/* Loading more indicator */}
-      {isLoading && articles.length > 0 && (
-        <div className="mt-12 flex justify-center">
-          <div className="h-1.5 w-32 overflow-hidden rounded-full bg-muted">
-            <motion.div
-              className="h-full bg-primary"
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }}
-            />
+      {/* Article Grid and Sidebar Layout */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        {/* Left Column: News Grid (8 Cols) */}
+        <div className="lg:col-span-8 space-y-8">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <AnimatePresence mode="popLayout">
+              {sortedArticles.map((article) => (
+                <motion.div
+                  key={article.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5, cubicBezier: [0.16, 1, 0.3, 1] }}
+                >
+                  <ArticleCard
+                    article={article}
+                    onClick={() => handleArticleClick(article.id)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        </div>
-      )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination className="mt-10">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  if (currentPage > 1) {
-                    setPage(currentPage - 1)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
-                  }
-                }}
-                aria-disabled={currentPage <= 1}
-                className={currentPage <= 1 ? 'pointer-events-none opacity-40' : ''}
-              />
-            </PaginationItem>
-
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const page = i + 1
-              const isFirst = page === 1
-              const isLast = page === totalPages
-              const isNearCurrent = Math.abs(page - currentPage) <= 1
-              const showEllipsisBefore = !isFirst && page === currentPage - 2
-              const showEllipsisAfter = !isLast && page === currentPage + 2
-
-              if (showEllipsisBefore || showEllipsisAfter) {
-                return (
-                  <PaginationItem key={`ellipsis-${page}`}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                )
-              }
-
-              if (!isFirst && !isLast && !isNearCurrent && !showEllipsisBefore && !showEllipsisAfter) {
-                return null
-              }
-
-              return (
-                <PaginationItem key={page}>
-                  <PaginationLink
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination className="pt-6">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
                     href="#"
-                    isActive={currentPage === page}
                     onClick={(e) => {
                       e.preventDefault()
-                      setPage(page)
-                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                      if (currentPage > 1) {
+                        setPage(currentPage - 1)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }
                     }}
-                  >
-                    {page}
-                  </PaginationLink>
+                    aria-disabled={currentPage <= 1}
+                    className={currentPage <= 1 ? 'pointer-events-none opacity-40' : ''}
+                  />
                 </PaginationItem>
-              )
-            })}
 
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  if (currentPage < totalPages) {
-                    setPage(currentPage + 1)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const page = i + 1
+                  const isFirst = page === 1
+                  const isLast = page === totalPages
+                  const isNearCurrent = Math.abs(page - currentPage) <= 1
+                  const showEllipsisBefore = !isFirst && page === currentPage - 2
+                  const showEllipsisAfter = !isLast && page === currentPage + 2
+
+                  if (showEllipsisBefore || showEllipsisAfter) {
+                    return (
+                      <PaginationItem key={`ellipsis-${page}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )
                   }
-                }}
-                aria-disabled={currentPage >= totalPages}
-                className={currentPage >= totalPages ? 'pointer-events-none opacity-40' : ''}
+
+                  if (!isFirst && !isLast && !isNearCurrent && !showEllipsisBefore && !showEllipsisAfter) {
+                    return null
+                  }
+
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href="#"
+                        isActive={currentPage === page}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setPage(page)
+                          window.scrollTo({ top: 0, behavior: 'smooth' })
+                        }}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      if (currentPage < totalPages) {
+                        setPage(currentPage + 1)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }
+                    }}
+                    aria-disabled={currentPage >= totalPages}
+                    className={currentPage >= totalPages ? 'pointer-events-none opacity-40' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+        </div>
+
+        {/* Right Column: Sidebar (4 Cols) */}
+        <aside className="lg:col-span-4 space-y-8">
+          {/* Top Trends (Popular Articles) */}
+          <div className="rounded-2xl border border-border/40 bg-card/30 p-6 backdrop-blur-sm">
+            <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-foreground/80 font-heading flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              Artículos Populares
+            </h3>
+            
+            <div className="divide-y divide-border/20">
+              {[...articles]
+                .sort((a, b) => b.views - a.views)
+                .slice(0, 5)
+                .map((art, idx) => (
+                  <div
+                    key={art.id}
+                    className="flex gap-4 py-4 first:pt-0 last:pb-0 group cursor-pointer"
+                    onClick={() => handleArticleClick(art.id)}
+                  >
+                    <span className="text-3xl font-black font-heading text-primary/20 transition-colors group-hover:text-primary/40 leading-none">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
+                    <div className="space-y-1">
+                      {art.category && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: art.color }}>
+                          {art.category.name}
+                        </span>
+                      )}
+                      <h4 className="text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary font-heading line-clamp-2">
+                        {art.title}
+                      </h4>
+                      <span className="text-[10px] text-muted-foreground block">
+                        {art.views} visitas
+                      </span>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          {/* Newsletter Box */}
+          <div className="rounded-2xl border border-border/40 bg-gradient-to-br from-primary/5 to-accent/5 p-6 backdrop-blur-sm relative overflow-hidden group">
+            {/* Ambient Background Glow */}
+            <div className="absolute -right-10 -bottom-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl group-hover:bg-primary/15 transition-all duration-500" />
+            
+            <h3 className="text-sm font-bold font-heading mb-1.5 text-foreground flex items-center gap-1.5">
+              Boletín Informativo
+            </h3>
+            <p className="text-xs leading-relaxed text-muted-foreground mb-4">
+              Suscríbete para recibir los artículos más leídos y debates de actualidad en tu bandeja de entrada.
+            </p>
+            
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault()
+                const form = e.currentTarget
+                const input = form.elements.namedItem('email') as HTMLInputElement
+                if (input.value) {
+                  alert(`¡Gracias por suscribirte con: ${input.value}!`)
+                  input.value = ''
+                }
+              }}
+              className="space-y-2 relative z-10"
+            >
+              <Input
+                name="email"
+                type="email"
+                placeholder="tu@email.com"
+                required
+                className="h-9 rounded-xl border-border bg-card/65 text-xs"
               />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+              <Button type="submit" className="w-full h-9 rounded-xl text-xs font-semibold shadow-md shadow-primary/20">
+                Suscribirse
+              </Button>
+            </form>
+          </div>
+        </aside>
+      </div>
     </section>
   )
 }

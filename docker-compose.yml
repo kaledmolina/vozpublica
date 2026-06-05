@@ -6,7 +6,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: news_portal
-    # Los puertos 3306 se eliminaron por seguridad. 
+    ports:
+      - "3306:3306"
+    # Los puertos 3306 se eliminaron por seguridad en prod, pero se exponen localmente para desarrollo.
     # La web igual puede conectarse internamente.
     volumes:
       - mysql_data_colombiadebate:/var/lib/mysql

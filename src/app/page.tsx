@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { usePublicStore } from '@/store/public-store'
 import { useAdminStore } from '@/store/admin-store'
 import { PublicHeader } from '@/components/public/PublicHeader'
-import { HeroSection } from '@/components/public/HeroSection'
+import { HeroCarousel } from '@/components/public/HeroCarousel'
 import { NewsGrid } from '@/components/public/NewsGrid'
 import { ArticleDetail } from '@/components/public/ArticleDetail'
 import { PublicFooter } from '@/components/public/PublicFooter'
@@ -32,8 +32,7 @@ import { toast } from 'sonner'
 // ============================================================
 function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
   const currentView = usePublicStore((s) => s.currentView)
-  const featuredArticle = usePublicStore((s) => s.featuredArticle)
-  const selectedArticle = usePublicStore((s) => s.selectedArticle)
+  const articles = usePublicStore((s) => s.articles)
   const fetchCategories = usePublicStore((s) => s.fetchCategories)
   const fetchSettings = usePublicStore((s) => s.fetchSettings)
   const fetchArticles = usePublicStore((s) => s.fetchArticles)
@@ -50,21 +49,9 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
     }
   }, [currentView, fetchArticles])
 
-  const handleHeroClick = useCallback(() => {
-    if (featuredArticle) {
-      fetchArticle(featuredArticle.id)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }, [featuredArticle, fetchArticle])
-
-  // Find featured article from loaded articles
-  useEffect(() => {
-    const articles = usePublicStore.getState().articles
-    const featured = articles.find((a) => a.isFeatured)
-    if (featured && !usePublicStore.getState().featuredArticle) {
-      usePublicStore.setState({ featuredArticle: featured })
-    }
-  }, [usePublicStore.getState().articles])
+  // Get articles for carousel: featured ones first, or fallback to top 4 latest
+  const featured = articles.filter((a) => a.isFeatured)
+  const carouselArticles = featured.length > 0 ? featured.slice(0, 4) : articles.slice(0, 4)
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -80,12 +67,18 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Hero Section */}
-              {featuredArticle && currentView === 'home' && (
-                <HeroSection article={featuredArticle} onClick={handleHeroClick} />
+              {/* Hero Carousel Banner */}
+              {carouselArticles.length > 0 && (
+                <HeroCarousel
+                  articles={carouselArticles}
+                  onArticleClick={(id) => {
+                    fetchArticle(id)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                />
               )}
 
-              {/* News Grid */}
+              {/* News Grid & Sidebar Layout */}
               <NewsGrid />
             </motion.div>
           ) : (
