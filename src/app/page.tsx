@@ -39,6 +39,9 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
   const fetchArticle = usePublicStore((s) => s.fetchArticle)
   const selectedCategory = usePublicStore((s) => s.selectedCategory)
   const searchQuery = usePublicStore((s) => s.searchQuery)
+  const settings = usePublicStore((s) => s.settings)
+  const categories = usePublicStore((s) => s.categories)
+  const isLoading = usePublicStore((s) => s.isLoading)
 
   useEffect(() => {
     fetchCategories()
@@ -50,6 +53,19 @@ function PublicPortal({ onLoginClick }: { onLoginClick: () => void }) {
       fetchArticles({ limit: 16 })
     }
   }, [currentView, fetchArticles])
+
+  const isInitialLoading = Object.keys(settings).length === 0 || categories.length === 0 || (isLoading && articles.length === 0)
+
+  if (isInitialLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground animate-pulse">Cargando Enfoque360...</p>
+        </div>
+      </div>
+    )
+  }
 
   // Get articles for HeroSection: featured ones first, or fallback to top 8 latest
   const featured = articles.filter((a) => a.isFeatured)

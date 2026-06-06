@@ -31,7 +31,7 @@ export function PublicHeader({ onLoginClick }: PublicHeaderProps) {
   const setView = usePublicStore((s) => s.setView)
   
   const settings = usePublicStore((s) => s.settings || {})
-  const siteName = settings.site_name || 'Semana'
+  const siteName = settings.site_name || 'Enfoque360'
   const siteLogo = settings.site_logo
 
   const handleDesktopSearch = useCallback(
