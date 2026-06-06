@@ -1,33 +1,33 @@
 services:
   db:
     image: mysql:8.0
-    container_name: mysql-database-enfoque360
+    container_name: mysql-database-vozpublica
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: news_portal
+      MYSQL_DATABASE: vozpublica_db
     # Los puertos 3306 se eliminan para producción por seguridad y para evitar conflictos.
     # La web se conecta internamente a través de la red del contenedor.
     volumes:
-      - mysql_data_enfoque360:/var/lib/mysql
+      - mysql_data_vozpublica:/var/lib/mysql
 
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nextjs-web-app-enfoque360
+    container_name: nextjs-web-app-vozpublica
     ports:
-      - "127.0.0.1:3004:3000" # Modificado para obligar a pasar por CloudPanel en puerto 3004 (para evitar choques con puerto 3003 de puntonews)
+      - "127.0.0.1:3005:3000" # Modificado para obligar a pasar por CloudPanel en puerto 3005 (para evitar choques con puerto 3004 de enfoque360 y 3003 de puntonews)
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://root:rootpassword@db:3306/news_portal
-      - NEXTAUTH_URL=https://enfoque360.online # CRÍTICO para que el login funcione en producción
+      - DATABASE_URL=mysql://root:rootpassword@db:3306/vozpublica_db
+      - NEXTAUTH_URL=https://vozpublica.online # CRÍTICO para que el login funcione en producción
       - NEXTAUTH_SECRET=news-portal-secret-key-change-in-production
       - HOSTNAME=0.0.0.0 # <-- LA SOLUCIÓN AL ERROR 502
     volumes:
-      - /home/enfoque360/htdocs/enfoque360.online/public/uploads:/app/public/uploads
+      - /home/vozpublica/htdocs/vozpublica.online/public/uploads:/app/public/uploads
     restart: always
 
 volumes:
-  mysql_data_enfoque360:
+  mysql_data_vozpublica:

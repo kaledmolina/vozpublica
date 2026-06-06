@@ -90,7 +90,7 @@ export function HeroSection({ articles, onArticleClick }: HeroSectionProps) {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-secondary/50">
-                  <span className="text-2xl font-black font-heading text-muted-foreground/30">Enfoque360</span>
+                  <span className="text-2xl font-black font-heading text-muted-foreground/30">VozPublica</span>
                 </div>
               )}
             </div>
